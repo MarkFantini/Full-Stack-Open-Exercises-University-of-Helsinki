@@ -1,21 +1,26 @@
 import { useState } from 'react'
 
-const Person = ({ name }) => {
+const Person = ({ name, number }) => {
   return (
-    <div>{name}</div>
+    <div>{name} {number}</div>
   )
 }
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    {
+      name: 'Arto Hellas',
+      number: '040-1234567',
+    }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
     const object = {
       name: newName,
+      number: newNumber
     }
 
     const nameExists = persons.some((person) => person.name === newName)
@@ -33,6 +38,10 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const handleNewNumber = (event) => {
+    setNewNumber(event.target.value)
+  }
+
   return (
     <div>
 
@@ -41,6 +50,9 @@ const App = () => {
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNewName} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNewNumber} />
         </div>
 
         <div>
@@ -52,7 +64,7 @@ const App = () => {
       
       <h2>Numbers</h2>
         {persons.map(person => 
-          <Person key={person.name} name={person.name} />
+          <Person key={person.name} name={person.name} number={person.number} />
         )}
     </div>
   )
