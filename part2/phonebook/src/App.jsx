@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import phoneService from './services/phones'
 
 const Filter = ({ value, handle }) => {
@@ -29,17 +28,25 @@ const PersonForm = ({ submit, name, nameHandler, number, numberHandler }) => {
   )
 }
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, deleteHandler }) => {
   return (
     persons.map(person => 
-      <Person key={person.name} name={person.name} number={person.number} />
+      <Person
+        key={person.name}
+        name={person.name}
+        number={person.number}
+        id={person.id}
+        deleteHandler={deleteHandler}
+      />
     )
   )
 }
 
-const Person = ({ name, number }) => {
+const Person = ({ name, number, id, deleteHandler }) => {
   return (
-    <div>{name} {number}</div>
+      <div>
+        {name} {number}<button onClick={() => deleteHandler(name, id)}>delete</button>
+        </div>
   )
 }
 
@@ -71,14 +78,8 @@ const App = () => {
       .then(addedPhone => {
         setPersons(persons.concat(addedPhone))
         setNewName('')
+        setNewNumber('')
       })
-    // axios
-    //   .post('http://localhost:3001/persons', newPerson)
-    //   .then(response => {
-    //     setPersons(persons.concat(response.data))
-    //     setNewName('')
-    //     setNewNumber('')
-    //   })
   }
 
   const handleNewName = (event) => {
@@ -93,6 +94,22 @@ const App = () => {
     setFilteredName(event.target.value)
   }
 
+  const deletePerson = (name, id) => {
+    if (confirm(`Delete ${name}?`)) {
+      phoneService
+        .deletePhone(id)
+        .then(() => {
+          const personsAfterDeletion = persons.filter(person => person.id !== id)
+          setPersons(personsAfterDeletion)
+        })
+        .catch(error => {
+          alert(`The person ${name} was already removed from the server`)
+          // const personsAfterDeletion = persons.filter(person => person.id !== id)
+          setPersons(personsAfterDeletion)
+        })
+    }
+  }
+
   const filteredPersons = showFiltered
   ? persons
   : persons.filter(person => person.name.toLowerCase().includes(filteredName.toLowerCase()))
@@ -102,7 +119,6 @@ const App = () => {
     phoneService
       .getPhones()
       .then(initialPersons => {
-        console.log(initialPersons)
         setPersons(initialPersons)
       })
   }, [])
@@ -126,7 +142,10 @@ const App = () => {
 
       
       <h2>Numbers</h2>
-      <Persons persons={filteredPersons} />
+      <Persons
+        persons={filteredPersons}
+        deleteHandler={deletePerson}
+      />
     </div>
   )
 }

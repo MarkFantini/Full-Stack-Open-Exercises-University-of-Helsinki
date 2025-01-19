@@ -13,7 +13,7 @@ const addPhone = newPhone => {
 }
 
 const deletePhone = id => {
-    const request = axios.delete(baseUrl, id)
+    const request = axios.delete(`${baseUrl}/${id}`, id)
     return request.then(response => response.data)
 }
 
