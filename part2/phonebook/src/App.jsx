@@ -66,19 +66,19 @@ const App = () => {
       return
     }
 
-    // phoneService
-    //   .addPhone(newPerson)
-    //   .then(addedPhone => {
-    //     setPersons(persons.concat(addedPhone))
-    //     setNewName('')
-    //   })
-    axios
-      .post('http://localhost:3001/persons', newPerson)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+    phoneService
+      .addPhone(newPerson)
+      .then(addedPhone => {
+        setPersons(persons.concat(addedPhone))
         setNewName('')
-        setNewNumber('')
       })
+    // axios
+    //   .post('http://localhost:3001/persons', newPerson)
+    //   .then(response => {
+    //     setPersons(persons.concat(response.data))
+    //     setNewName('')
+    //     setNewNumber('')
+    //   })
   }
 
   const handleNewName = (event) => {
@@ -105,12 +105,6 @@ const App = () => {
         console.log(initialPersons)
         setPersons(initialPersons)
       })
-    // axios
-    //   .get('http://localhost:3001/persons')
-      // .then(response => {
-      //   console.log(persons)
-      //   setPersons(response.data)
-      // })
   }, [])
   console.log('render', persons.length, 'persons')
 
