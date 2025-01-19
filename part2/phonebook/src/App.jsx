@@ -69,17 +69,27 @@ const App = () => {
     const nameExists = persons.some((person) => person.name === newName)
 
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`)
-      return
-    }
-
-    phoneService
-      .addPhone(newPerson)
-      .then(addedPhone => {
-        setPersons(persons.concat(addedPhone))
-        setNewName('')
-        setNewNumber('')
-      })
+      
+      const replace = confirm(`${newName} is already added to phonebook. Replace the old number with a new one?`)
+      const id = persons.find((person) => person.name === newName).id
+      
+      if (replace) {
+        phoneService
+          .updatePhone(id, newPerson)
+          .then(updatedPhone => {
+            setPersons(persons.map(person => person.id === id ? updatedPhone : person))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+    } else {
+      phoneService
+        .addPhone(newPerson)
+        .then(addedPhone => {
+          setPersons(persons.concat(addedPhone))
+          setNewName('')
+          setNewNumber('')
+        })}
   }
 
   const handleNewName = (event) => {
@@ -104,7 +114,6 @@ const App = () => {
         })
         .catch(error => {
           alert(`The person ${name} was already removed from the server`)
-          // const personsAfterDeletion = persons.filter(person => person.id !== id)
           setPersons(personsAfterDeletion)
         })
     }
