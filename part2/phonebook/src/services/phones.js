@@ -19,7 +19,6 @@ const updatePhone = (id, newPhone) => {
 
 const deletePhone = id => {
     const request = axios.delete(`${baseUrl}/${id}`, id)
-    console.log(request.then(response => response.data))
     return request.then(response => response.data)
 }
 

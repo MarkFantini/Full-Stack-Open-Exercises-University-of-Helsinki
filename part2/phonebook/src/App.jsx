@@ -70,7 +70,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filteredName, setFilteredName] = useState('')
-  const [inclusionMessage, setInclusionMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const showFiltered = false
 
   const addPerson = (event) => {
@@ -83,8 +83,8 @@ const App = () => {
     const nameExists = persons.some((person) => person.name === newName)
 
     if (nameExists) {
-      
       const replace = confirm(`${newName} is already added to phonebook. Replace the old number with a new one?`)
+      
       const id = persons.find((person) => person.name === newName).id
       
       if (replace) {
@@ -94,15 +94,15 @@ const App = () => {
             setPersons(persons.map(person => person.id === id ? updatedPhone : person))
             setNewName('')
             setNewNumber('')
-            setInclusionMessage(`Phone ${newName} has been updated`)
-            setInclusionMessage(() => {
-              setInclusionMessage(null)
+            setMessage(`Phone ${newName} has been updated`)
+            setTimeout(() => {
+              setMessage(null)
             }, 5000)
           })
           .catch(error => {
-            setInclusionMessage(`Information of ${newName} has already been removed from server`)
+            setMessage(`${error}`)
             setTimeout(() => {
-              setInclusionMessage(null)
+              setMessage(null)
             }, 5000)
           })
       }
@@ -113,9 +113,9 @@ const App = () => {
           setPersons(persons.concat(addedPhone))
           setNewName('')
           setNewNumber('')
-          setInclusionMessage(`Phone ${newName} has been added`)
+          setMessage(`Phone ${newName} has been added`)
           setTimeout(() => {
-            setInclusionMessage(null)
+            setMessage(null)
           }, 5000)
         })}
   }
@@ -138,15 +138,12 @@ const App = () => {
         .deletePhone(id)
         .then(() => {
           const personsAfterDeletion = persons.filter(person => person.id !== id)
-          console.log('ID to be deleted: ', id)
           setPersons(personsAfterDeletion)
-          console.log('Persons after deletion')
-          console.log(persons)
         })
         .catch(error => {
-          setInclusionMessage(`Information of ${newName} has already been removed from server`)
+          setMessage(`Information of ${newName} has already been removed from server`)
           setTimeout(() => {
-            setInclusionMessage(null)
+            setMessage(null)
           }, 5000)
         })
     }
@@ -170,7 +167,7 @@ const App = () => {
     <div>
 
       <h2>Phonebook</h2>
-      <Notification message={inclusionMessage} />
+      <Notification message={message} />
       <Filter value={filteredName} handle={nameFilter} />
 
 
