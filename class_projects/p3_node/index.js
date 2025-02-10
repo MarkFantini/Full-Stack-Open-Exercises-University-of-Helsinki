@@ -55,20 +55,18 @@ app.get('/api/notes', (request, response) => {
 
 
 app.get('/api/notes/:id', (request, response) => {
-  // const id = request.params.id
-
-  // Note.find({ _id: id }).then(note => {
-  //   response.json(note)
-  // })
-  // .catch(error => {
-  //   // response.status(404).send('ID not found')
-  //   response.status(404).end()
-  // })
-  Note.findById(request.params.id).then(note => {
-    response.json(note)
+  Note.findById(request.params.id)
+  .then(note => {
+    if (note) {
+      response.json(note)
+    } else {
+      response.status(404).end()
+    }
   })
   .catch(error => {
-    response.status(404).end()
+    response.status(400).send({
+      error: 'malformatted id'
+    })
   })
 })
 
