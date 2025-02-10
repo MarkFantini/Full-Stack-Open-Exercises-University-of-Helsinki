@@ -1,8 +1,8 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const mongoose = require('mongoose')
 const app = express()
+const Note = require('./models/note')
 
 app.use(cors())
 app.use(express.json())
@@ -19,25 +19,6 @@ const requestLogger = (request, response, next) => {
 
 app.use(requestLogger)
 
-const url = process.env.MONGODB_URI;
-
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-})
-
-noteSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 // let notes = [
 //   {
@@ -96,7 +77,6 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-
   const note = new Note({
     content: body.content,
     important: body.important,
@@ -107,7 +87,6 @@ app.post('/api/notes', (request, response) => {
     console.log('Note contents')
     response.json(note)
   })
-
 })
 
 
@@ -129,7 +108,7 @@ app.use(unknownEndpoint)
 
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
